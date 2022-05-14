@@ -1,4 +1,9 @@
+const env = process.env.NODE_ENV || "development";
+const webpack = require("webpack");
+
 module.exports = {
+  mode: env,
+
   entry: "./src/index.js",
 
   output: {
@@ -10,4 +15,6 @@ module.exports = {
     static: "dist",
     open: true,
   },
+
+  plugins: [new webpack.EnvironmentPlugin(["NOTION_API_KEY"])],
 };
