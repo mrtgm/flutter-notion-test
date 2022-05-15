@@ -53,10 +53,11 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   _controller = webViewController;
                   await _controller
                       .loadFlutterAsset('assets/web/dist/index.html');
+                  await _controller
+                      .runJavascript("console.log(${widget.pageId})");
                 },
                 onPageFinished: (String url) {
-                  print(widget.pageId);
-                  _controller.runJavascript("RenderMd(${widget.pageId})");
+                  RunScript();
                 },
                 javascriptMode: JavascriptMode.unrestricted,
               ),
@@ -65,5 +66,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
         ),
       ),
     );
+  }
+
+  void RunScript() async {
+    await _controller.runJavascript("RenderMd('${widget.pageId.toString()}')");
   }
 }

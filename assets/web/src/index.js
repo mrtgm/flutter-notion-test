@@ -10,11 +10,13 @@ const notion = new Client({
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
 const target = document.querySelector("#content");
+const spinner = document.querySelector("#spinner");
 
 function renderMarkdown(pageId) {
   n2m.pageToMarkdown(pageId).then((mdblocks) => {
     const mdString = n2m.toMarkdownString(mdblocks);
     target.innerHTML = markdownit().render(mdString);
+    spinner.style.display = "none";
   });
 }
 
