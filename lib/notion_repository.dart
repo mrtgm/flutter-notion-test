@@ -39,23 +39,4 @@ class NotionRepository {
       throw 'Something went wrong!';
     }
   }
-
-  Future<void> getBlocks({required String pageId}) async {
-    try {
-      final url = '${_baseUrl}blocks/${pageId}/children?page_size=100';
-
-      final response = await _client.get(
-        Uri.parse(url),
-        headers: reqHeader,
-      );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        print(data);
-      } else {
-        throw 'Something went wrong!';
-      }
-    } catch (_) {
-      throw 'Something went wrong!';
-    }
-  }
 }
