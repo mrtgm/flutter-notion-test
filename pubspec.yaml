@@ -13,6 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_dotenv: ^5.0.2
   http: ^0.13.4
+  webview_flutter: ^3.0.4
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +24,4 @@ flutter:
   uses-material-design: true
   assets:
     - .envrc
+    - assets/web/dist/
