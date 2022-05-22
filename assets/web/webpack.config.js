@@ -21,19 +21,19 @@ module.exports = {
   },
 
   module: {
-    rules: [
-      {
-        test: /\.js$/i,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [["@babel/preset-env", { useBuiltIns: "usage", corejs: "3" }]],
-            cacheDirectory: true,
-          },
-        },
-      },
-    ],
+//    rules: [
+//      {
+//        test: /\.js$/i,
+//        exclude: /node_modules/,
+//        use: {
+//          loader: "babel-loader",
+//          options: {
+//            presets: [["@babel/preset-env", { useBuiltIns: "usage", corejs: "3" }]],
+//            cacheDirectory: true,
+//          },
+//        },
+//      },
+//    ],
   },
 
   plugins: [new webpack.EnvironmentPlugin(["NOTION_API_KEY"])],

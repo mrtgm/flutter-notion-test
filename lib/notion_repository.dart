@@ -11,7 +11,7 @@ class NotionRepository {
   final http.Client _client;
   final Map<String, String> reqHeader = {
     HttpHeaders.authorizationHeader: 'Bearer ${dotenv.env['NOTION_API_KEY']}',
-    'Notion-Version': '2021-05-13',
+    'Notion-Version': '2022-02-22',
   };
 
   NotionRepository({http.Client? client}) : _client = client ?? http.Client();
@@ -32,6 +32,25 @@ class NotionRepository {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         return (data['results'] as List).map((e) => Item.fromMap(e)).toList();
+      } else {
+        throw 'Something went wrong!';
+      }
+    } catch (_) {
+      throw 'Something went wrong!';
+    }
+  }
+
+  Future<String> getBlocks({required String pageId}) async {
+    try {
+      final url = '${_baseUrl}blocks/$pageId/children?page_size=100';
+      final response = await _client.get(
+        Uri.parse(url),
+        headers: reqHeader,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return jsonEncode(data['results']);
       } else {
         throw 'Something went wrong!';
       }
