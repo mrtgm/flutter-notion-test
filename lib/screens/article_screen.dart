@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_notion_test/notion_repository.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
@@ -23,7 +25,15 @@ class _ArticleScreenState extends State<ArticleScreen> {
   @override
   void initState() {
     super.initState();
-    _article = NotionRepository().getBlocks(pageId: widget.pageId);
+    _article = fetchData();
+  }
+
+  Future<String> fetchData() async {
+    NotionRepository notion = NotionRepository();
+    List<Map<String, dynamic>> itemList =
+        await notion.getBlocks(pageId: widget.pageId);
+    dynamic result = await notion.blocksToMarkdown(blocks: itemList);
+    return notion.toMarkdownString(mdBlocks: result);
   }
 
   @override
@@ -32,7 +42,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
       appBar: AppBar(title: Text(widget.title)),
       body: FutureBuilder(
           future: _article,
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -57,28 +67,16 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   SizedBox(
                     height: 24.0,
                   ),
-                  Expanded(child: ListView(children: [Text(markdownStrings)])),
-                  SizedBox(
-                    height: 0,
-                    child: WebView(
-                      debuggingEnabled: true,
-                      onWebViewCreated:
-                          (WebViewController webViewController) async {
-                        _controller = webViewController;
-                        await _controller
-                            .loadFlutterAsset('assets/web/dist/index.html');
+                  Expanded(
+                    child: Markdown(
+                      data: article,
+                      imageBuilder: (uri, title, alt) {
+                        return Center(
+                          child: Image.network(
+                            uri.toString(),
+                          ),
+                        );
                       },
-                      onPageFinished: (String url) {
-                        runScript(article);
-                      },
-                      javascriptMode: JavascriptMode.unrestricted,
-                      javascriptChannels: Set.from([
-                        JavascriptChannel(
-                            name: "getData",
-                            onMessageReceived: (JavascriptMessage result) {
-                              getMarkdownStrings(result.message);
-                            })
-                      ]),
                     ),
                   ),
                 ],
@@ -86,15 +84,5 @@ class _ArticleScreenState extends State<ArticleScreen> {
             );
           }),
     );
-  }
-
-  void runScript(dynamic article) async {
-    await _controller.runJavascript("RenderMd('${article}')");
-  }
-
-  void getMarkdownStrings(String str) {
-    setState(() {
-      markdownStrings = str;
-    });
   }
 }
