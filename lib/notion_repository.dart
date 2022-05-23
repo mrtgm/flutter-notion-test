@@ -73,9 +73,10 @@ class NotionRepository {
     }
   }
 
+  List<MdBlock> mdBlocks = [];
   Future blocksToMarkdown(
-      {List<Map<String, dynamic>>? blocks, List<MdBlock>? mdBlocks}) async {
-    mdBlocks = [];
+      {required List<Map<String, dynamic>>? blocks,
+      List<MdBlock>? mdBlock}) async {
     if (blocks == null) return mdBlocks;
 
     try {
@@ -93,7 +94,8 @@ class NotionRepository {
 
           await blocksToMarkdown(
               blocks: child_blocks,
-              mdBlocks: mdBlocks[mdBlocks.length - 1].children);
+              mdBlock: mdBlocks[mdBlocks.length - 1].children);
+
           continue;
         }
         String tmp = await blockToMarkdown(block);
@@ -103,7 +105,7 @@ class NotionRepository {
         );
       }
     } catch (e) {
-      throw e;
+      print(e);
     }
 
     for (dynamic mdBlock in mdBlocks) {
@@ -118,7 +120,8 @@ class NotionRepository {
     String mdString = "";
     mdBlocks.forEach((mdBlock) {
       if (mdBlock.parent != null) {
-        mdString += "${md.addTabSpace(mdBlock.parent, nestingLevel)}";
+        mdString +=
+            '\n${md.addTabSpace(text: mdBlock.parent, n: nestingLevel)}\n';
       }
       if (mdBlock.children != null && mdBlock.children.length > 0) {
         mdString += toMarkdownString(

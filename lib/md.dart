@@ -65,16 +65,19 @@ String image(String alt, String href) {
   return '![${alt}](${href})';
 }
 
-String addTabSpace(String text, int n) {
-  n = 0;
+String addTabSpace({required String text, int n = 0}) {
   String tab = " ";
   final RegExp reg = RegExp(r'(?<=\n)');
   for (int i = 0; i < n; i++) {
     if (text.contains('\\n')) {
       String multiLineText = text.split(reg).join(tab);
+
+      print(multiLineText);
       text = tab + multiLineText;
     } else {
       text = tab + text;
+
+      print(text);
     }
   }
   return text;

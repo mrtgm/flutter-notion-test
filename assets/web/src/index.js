@@ -9,12 +9,12 @@ const notion = new Client({
 
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
-function renderMarkdown(res) {
-    n2m.blocksToMarkdown([...JSON.parse(res)]).then((mdBlocks)=>{
-        const mdString = n2m.toMarkdownString(mdBlocks);
-
-        getData.postMessage(mdString); //pass data to dart
-    });
+function renderMarkdown(pageId) {
+  n2m.pageToMarkdown(pageId).then((mdblocks) => {
+    console.log(mdblocks);
+    const mdString = n2m.toMarkdownString(mdblocks);
+    console.log(mdString);
+  });
 }
 
 module.exports = renderMarkdown;
