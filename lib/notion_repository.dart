@@ -76,7 +76,8 @@ class NotionRepository {
   List<MdBlock> mdBlocks = [];
   Future blocksToMarkdown(
       {required List<Map<String, dynamic>>? blocks,
-      List<MdBlock>? mdBlock}) async {
+      List<MdBlock>? mdBlock,
+      bool? hasChild}) async {
     if (blocks == null) return mdBlocks;
 
     try {
@@ -92,14 +93,23 @@ class NotionRepository {
             MdBlock(parent: await blockToMarkdown(block), children: []),
           );
 
+          int l = mdBlocks.length;
+
           await blocksToMarkdown(
               blocks: child_blocks,
-              mdBlock: mdBlocks[mdBlocks.length - 1].children);
+              mdBlock: mdBlocks[l - 1].children,
+              hasChild: true);
 
           continue;
         }
         String tmp = await blockToMarkdown(block);
 
+        if (hasChild != null) {
+          mdBlock?.add(
+            MdBlock(parent: tmp, children: []),
+          );
+          return;
+        }
         mdBlocks.add(
           MdBlock(parent: tmp, children: []),
         );
@@ -108,24 +118,29 @@ class NotionRepository {
       print(e);
     }
 
-    for (dynamic mdBlock in mdBlocks) {
-      print(mdBlock.toString());
-    }
+    // for (dynamic mdBlock in mdBlocks) {
+    //   print(mdBlock.toString());
+    // }
 
     return mdBlocks;
   }
 
+  int nestingLevel = 0;
   String toMarkdownString(
-      {required List<MdBlock> mdBlocks, int nestingLevel = 0}) {
+      {required List<MdBlock> mdBlocks, int? nesting, bool? hasChild}) {
     String mdString = "";
     mdBlocks.forEach((mdBlock) {
       if (mdBlock.parent != null) {
+        if (hasChild != null && nesting != null) {
+          mdString += '\n${md.addTabSpace(text: mdBlock.parent, n: nesting)}\n';
+          return;
+        }
         mdString +=
             '\n${md.addTabSpace(text: mdBlock.parent, n: nestingLevel)}\n';
       }
-      if (mdBlock.children != null && mdBlock.children.length > 0) {
+      if (mdBlock.children.isNotEmpty) {
         mdString += toMarkdownString(
-            mdBlocks: mdBlock.children, nestingLevel: nestingLevel + 1);
+            mdBlocks: mdBlock.children, nesting: 1, hasChild: true);
       }
     });
     return mdString;
