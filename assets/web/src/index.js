@@ -1,6 +1,6 @@
 const { Client } = require("@notionhq/client");
 const { NotionToMarkdown } = require("notion-to-md");
-const markdownit = require("markdown-it");
+const { getBlockChildre } = require("notion-to-md/build/utils/notion");
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -9,14 +9,11 @@ const notion = new Client({
 
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
-const target = document.querySelector("#content");
-const spinner = document.querySelector("#spinner");
-
 function renderMarkdown(pageId) {
   n2m.pageToMarkdown(pageId).then((mdblocks) => {
+    console.log(mdblocks);
     const mdString = n2m.toMarkdownString(mdblocks);
-    target.innerHTML = markdownit().render(mdString);
-    spinner.style.display = "none";
+    console.log(mdString);
   });
 }
 
