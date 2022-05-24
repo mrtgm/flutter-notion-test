@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../notion_repository.dart';
+import 'package:flutter_notion_test/lib/notion_to_md.dart';
 import 'article_screen.dart';
 import 'package:flutter_notion_test/models/item_model.dart';
 import 'dart:developer';
@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _futureItems = NotionRepository().getItems();
+    _futureItems = NotionToMd().getItems();
   }
 
   @override

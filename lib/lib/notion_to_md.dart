@@ -1,46 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:developer';
 
+import './md.dart' as md;
+import 'package:flutter_notion_test/notion/client.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import './md.dart' as md;
-import './models/item_model.dart';
+import 'package:flutter_notion_test/models/mdblock_model.dart';
+import 'package:flutter_notion_test/models/item_model.dart';
 
-class MdBlock {
-  String parent;
-  List<MdBlock> children;
-
-  MdBlock({required this.parent, required this.children});
-
-  @override
-  String toString() {
-    return "{parent: $parent, children: ${children.toString()}}";
-  }
-}
-
-class NotionRepository {
-  static const String _baseUrl = 'https://api.notion.com/v1/';
-
-  final http.Client _client;
-  final Map<String, String> reqHeader = {
-    HttpHeaders.authorizationHeader: 'Bearer ${dotenv.env['NOTION_API_KEY']}',
-    'Notion-Version': '2022-02-22',
-  };
-
-  NotionRepository({http.Client? client}) : _client = client ?? http.Client();
-
+class NotionToMd {
   void dispose() {
-    _client.close();
+    Client.client.close();
   }
 
   Future<List<Item>> getItems() async {
     try {
       final url =
-          '${_baseUrl}databases/${dotenv.env['NOTION_DATABASE_ID']}/query';
-      final response = await _client.post(
+          '${Client.baseUrl}databases/${dotenv.env['NOTION_DATABASE_ID']}/query';
+      final response = await Client.client.post(
         Uri.parse(url),
-        headers: reqHeader,
+        headers: Client.reqHeader,
       );
 
       if (response.statusCode == 200) {
@@ -56,10 +35,10 @@ class NotionRepository {
 
   Future<List<Map<String, dynamic>>> getBlocks({required String pageId}) async {
     try {
-      final url = '${_baseUrl}blocks/$pageId/children?page_size=100';
-      final response = await _client.get(
+      final url = '${Client.baseUrl}blocks/$pageId/children?page_size=100';
+      final response = await Client.client.get(
         Uri.parse(url),
-        headers: reqHeader,
+        headers: Client.reqHeader,
       );
 
       if (response.statusCode == 200) {

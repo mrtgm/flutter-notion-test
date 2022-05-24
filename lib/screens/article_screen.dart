@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_notion_test/notion_repository.dart';
+import 'package:flutter_notion_test/lib/notion_to_md.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -29,7 +29,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   }
 
   Future<String> fetchData() async {
-    NotionRepository notion = NotionRepository();
+    NotionToMd notion = NotionToMd();
     List<Map<String, dynamic>> itemList =
         await notion.getBlocks(pageId: widget.pageId);
     dynamic result = await notion.blocksToMarkdown(blocks: itemList);

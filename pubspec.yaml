@@ -27,6 +27,3 @@ flutter:
   assets:
     - .envrc
     - assets/images/
-    - assets/web/dist/index.html
-    - assets/web/dist/test.js
-    - assets/web/dist/main.js
