@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_notion_test/lib/notion_to_md.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
+import 'package:extended_image/extended_image.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ArticleScreen extends StatefulWidget {
   ArticleScreen(
@@ -19,7 +17,6 @@ class ArticleScreen extends StatefulWidget {
 
 class _ArticleScreenState extends State<ArticleScreen> {
   late Future<String> _article;
-  late WebViewController _controller;
   String markdownStrings = "";
 
   @override
@@ -72,8 +69,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       data: article,
                       imageBuilder: (uri, title, alt) {
                         return Center(
-                          child: Image.network(
+                          child: ExtendedImage.network(
                             uri.toString(),
+                            height: ScreenUtil().setHeight(300),
+                            cache: true,
                           ),
                         );
                       },
